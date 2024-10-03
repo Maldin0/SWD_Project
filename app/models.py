@@ -41,8 +41,10 @@ class Orders(models.Model):
 
 class OrderItems(models.Model):
     class Status(models.TextChoices):
-        FINISH = 'FINISH'
-        NOT_FINISH = 'NOT FINISH'
+        PENDING = 'PENDING'
+        COOKING = 'COOKING'
+        SERVING = 'SERVING'
+        FINISHED = 'FINISHED'
     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
     dish = models.ForeignKey(Dishes, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(default=1)
