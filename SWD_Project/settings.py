@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app.apps.AppConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +79,7 @@ WSGI_APPLICATION = 'SWD_Project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# เปิดตอนที่จะ push setting นี้ขึ้นไป
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -88,6 +90,18 @@ DATABASES = {
         "PORT": os.getenv("DB_PORT"),
     }
 }
+
+# # localhost ของบอส
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "restaurant",
+#         "USER": "postgres",
+#         "PASSWORD": "Boss3112545",
+#         "HOST": "localhost",
+#         "PORT": "5432",
+#     }
+# }
 
 
 # Password validation
@@ -125,6 +139,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

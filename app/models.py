@@ -1,4 +1,5 @@
 from django.db import models
+
 # Create your models here.
 
 class Tables(models.Model):
@@ -41,6 +42,7 @@ class Orders(models.Model):
 
 class OrderItems(models.Model):
     class Status(models.TextChoices):
+        NOT_FINISH = 'NOT_FINISH'
         PENDING = 'PENDING'
         COOKING = 'COOKING'
         SERVING = 'SERVING'

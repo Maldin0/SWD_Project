@@ -1,0 +1,215 @@
+/* menu */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.menu-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.course {
+    margin-bottom: 40px;
+}
+
+.course h2 {
+    background-color: #3498db;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.dishes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dish-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.dish-card:hover {
+    transform: scale(1.05);
+}
+
+.dish-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.dish-card h3 {
+    font-size: 20px;
+    margin: 15px 0;
+}
+
+.dish-card p {
+    font-size: 16px;
+    color: #555;
+}
+
+.price {
+    font-size: 18px;
+    color: #e74c3c;
+    margin-top: 10px;
+}
+
+/* history */
+.order-history-container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.order {
+    margin-bottom: 40px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.order-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.order-items-table th, .order-items-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.order-items-table th {
+    background-color: #3498db;
+    color: white;
+}
+
+.order-items-table td {
+    background-color: white;
+}
+
+/* สไตล์พื้นฐานสำหรับ body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+/* สไตล์สำหรับหัวข้อหลัก */
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+/* คอนเทนเนอร์หลักสำหรับประวัติการสั่งอาหาร */
+.order-history-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* สไตล์สำหรับแต่ละรายการคำสั่งซื้อ */
+.order {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* หัวข้อย่อยภายในแต่ละคำสั่งซื้อ */
+.order h2 {
+    font-size: 18px;
+    color: #555;
+}
+
+/* ตารางรายการอาหาร */
+.order-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+/* สไตล์หัวตาราง */
+.order-items-table thead {
+    background-color: #333;
+    color: #fff;
+}
+
+/* ช่องหัวตาราง */
+.order-items-table th {
+    padding: 10px;
+    text-align: left;
+}
+
+/* แถวข้อมูลในตาราง */
+.order-items-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* สไตล์สำหรับแถวข้อมูล */
+.order-items-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* สไตล์สำหรับสถานะอาหาร */
+.order-items-table td:nth-child(3) {
+    font-weight: bold;
+    color: #007bff; /* สีฟ้าสำหรับสถานะ */
+}
+
+/* สไตล์สำหรับข้อความไม่มีประวัติ */
+.message {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+    padding: 20px;
+}
+
+/* ปรับแต่ง responsive ให้ตารางพอดีกับหน้าจอขนาดเล็ก */
+@media (max-width: 768px) {
+    .order-items-table thead {
+        display: none;
+    }
+
+    .order-items-table tr {
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    .order-items-table td {
+        display: block;
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    .order-items-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        font-weight: bold;
+        text-align: left;
+    }
+}

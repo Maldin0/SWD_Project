@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เพิ่มเมนูอาหาร</title>
+    <link rel="stylesheet" href="{% static 'menu-form/style.css' %}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    {% include 'nav.html' %}
+
+    <div class="menu-form-container">
+        <h2>เพิ่มเมนูอาหารใหม่</h2>
+        <form method="post">
+            {% csrf_token %}
+            <!-- แสดงฟอร์ม -->
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button type="submit" class="btn">บันทึกเมนู</button>
+                <a href="{% url 'menu_list' %}" class="btn btn-cancel">ยกเลิก</a>
+            </div>
+        </form>
+
+        <!-- แสดงข้อผิดพลาดถ้ามี -->
+        {% if form.errors %}
+        <div class="error-messages">
+            <h3>พบข้อผิดพลาด:</h3>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                <li>{{ field }}: {{ errors|striptags }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

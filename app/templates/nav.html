@@ -1,0 +1,17 @@
+{% load static %}
+<!-- navbar.html -->
+<link rel="stylesheet" href="{% static 'nav/style.css' %}">
+
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-logo">
+            <h2>ร้านอาหาร</h2>
+        </div>
+        <div class="navbar-links">
+            <!-- ปุ่มดูประวัติการสั่งอาหาร -->
+            <a href="{% url 'order_history' table_number=table_number %}" class="navbar-btn">ดูประวัติการสั่งอาหาร</a>
+            <!-- ปุ่มดูตะกร้าอาหาร -->
+            <a href="#" class="navbar-btn">ตะกร้าอาหาร</a>
+        </div>
+    </div>
+</nav>
