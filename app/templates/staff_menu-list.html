@@ -8,13 +8,9 @@
     <link rel="stylesheet" href="{% static 'menu-list/style.css' %}">
 </head>
 <body>
-
-    <!-- เรียกใช้งาน Navbar -->
-    {% include 'nav.html' %}
-
     <!-- ส่วนเนื้อหาของเมนู -->
     <div class="content">
-        <h1>เมนูอาหารสำหรับโต๊ะ {{ table_number }}</h1>
+        <h1> ยินดีตอนรับพนักงานทุกท่าน </h1>
 
         <div class="menu-container">
             <!-- วนลูปแสดงหมวดหมู่อาหาร (Courses) -->
@@ -37,7 +33,9 @@
                             {{ dish.price }} บาท
                         </div>
 
-                        <button class="btn-add-cart">เพิ่มลงตะกร้า</button>
+                        <button>แก้ไข</button>
+                        <button>ลบ</button>
+                        <br>
                     </div>
                     {% endfor %}
                 </div>
@@ -45,6 +43,5 @@
             {% endfor %}
         </div>
     </div>
-
 </body>
 </html>

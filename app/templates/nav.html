@@ -9,7 +9,11 @@
         </div>
         <div class="navbar-links">
             <!-- ปุ่มดูประวัติการสั่งอาหาร -->
-            <a href="{% url 'order_history' table_number=table_number %}" class="navbar-btn">ดูประวัติการสั่งอาหาร</a>
+            {% if table_number %}
+            <a href="{% url 'order_history' table_number %}" class="navbar-btn">ดูประวัติการสั่งอาหาร</a>
+            {% else %}
+            <a href="#" class="navbar-btn disabled">ดูประวัติการสั่งอาหาร</a> <!-- ห้ามคลิกเมื่อไม่มี table_number -->
+            {% endif %}
             <!-- ปุ่มดูตะกร้าอาหาร -->
             <a href="#" class="navbar-btn">ตะกร้าอาหาร</a>
         </div>

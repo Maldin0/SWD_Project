@@ -10,6 +10,9 @@ class Tables(models.Model):
     number = models.IntegerField()
     status = models.CharField(choices=Status.choices, default=Status.AVAILABLE)
 
+    def __str__(self):
+        return str(self.number)
+
 
 class Courses(models.Model):
     name = models.CharField(max_length=150)
@@ -29,7 +32,7 @@ class TableCarts(models.Model):
 
 
 class TableCartItems(models.Model):
-    tableOrder = models.ForeignKey(TableCarts, on_delete=models.CASCADE)
+    table_order  = models.ForeignKey(TableCarts, on_delete=models.CASCADE)
     dish = models.ForeignKey(Dishes, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(default=1)
 

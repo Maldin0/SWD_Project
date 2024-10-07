@@ -16,11 +16,23 @@ class MenuListView(View):
         # ดึงข้อมูลหมวดหมู่และเมนูทั้งหมด
         courses = Courses.objects.all()
         dishes = Dishes.objects.all()
+        table_number = Tables.objects.get(pk=table_number)
 
         return render(request, 'menu-list.html', {
             'courses': courses, 
             'dishes': dishes,
-            'table_number': table_number  # ส่งหมายเลขโต๊ะไปยังเทมเพลต
+            'table_number': table_number  # ส่งเลขโต๊ะไป template
+        })
+
+class StaffMenuListView(View):
+    def get(self, request):
+        # ดึงข้อมูลหมวดหมู่และเมนูทั้งหมด
+        courses = Courses.objects.all()
+        dishes = Dishes.objects.all()
+
+        return render(request, 'staff_menu-list.html', {
+            'courses': courses, 
+            'dishes': dishes,
         })
 
 class OrderHistoryView(View):

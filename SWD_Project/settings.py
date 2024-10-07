@@ -91,13 +91,13 @@ DATABASES = {
     }
 }
 
-# # localhost ของบอส
+# localhost ของบอส
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql",
 #         "NAME": "restaurant",
 #         "USER": "postgres",
-#         "PASSWORD": "Boss3112545",
+#         "PASSWORD": "password",
 #         "HOST": "localhost",
 #         "PORT": "5432",
 #     }
