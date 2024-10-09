@@ -14,7 +14,11 @@
 
     <!-- ส่วนเนื้อหาของเมนู -->
     <div class="content">
+        {% if table_number %}
         <h1>เมนูอาหารสำหรับโต๊ะ {{ table_number }}</h1>
+        {% else %}
+        <h1>เมนูอาหารสำหรับพนักงาน</h1>
+        {% endif %}
 
         <div class="menu-container">
             <!-- วนลูปแสดงหมวดหมู่อาหาร (Courses) -->

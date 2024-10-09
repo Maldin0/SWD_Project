@@ -11,11 +11,12 @@
             <!-- ปุ่มดูประวัติการสั่งอาหาร -->
             {% if table_number %}
             <a href="{% url 'order_history' table_number %}" class="navbar-btn">ดูประวัติการสั่งอาหาร</a>
+            <!-- ปุ่มดูตะกร้าอาหาร -->
+            <a href="{% url 'view_cart' table_number %}" class="navbar-btn">ตะกร้า</a>
             {% else %}
             <a href="#" class="navbar-btn disabled">ดูประวัติการสั่งอาหาร</a> <!-- ห้ามคลิกเมื่อไม่มี table_number -->
+            <a href="#" class="navbar-btn disabled">ตะกร้า</a>
             {% endif %}
-            <!-- ปุ่มดูตะกร้าอาหาร -->
-            <a href="#" class="navbar-btn">ตะกร้าอาหาร</a>
         </div>
     </div>
 </nav>

@@ -12,27 +12,24 @@ from .forms import DishesForm
 
 # Create your views here.
 class MenuListView(View):
-    def get(self, request, table_number):
+    def get(self, request, table_number=None):  # กำหนดค่า table_number เป็น optional
         # ดึงข้อมูลหมวดหมู่และเมนูทั้งหมด
         courses = Courses.objects.all()
         dishes = Dishes.objects.all()
-        table_number = Tables.objects.get(pk=table_number)
+
+        # ตรวจสอบว่ามี table_number หรือไม่
+        if table_number:
+            try:
+                table_number = Tables.objects.get(pk=table_number)
+            except Tables.DoesNotExist:
+                table_number = None
+        else:
+            table_number = None
 
         return render(request, 'menu-list.html', {
             'courses': courses, 
             'dishes': dishes,
-            'table_number': table_number  # ส่งเลขโต๊ะไป template
-        })
-
-class StaffMenuListView(View):
-    def get(self, request):
-        # ดึงข้อมูลหมวดหมู่และเมนูทั้งหมด
-        courses = Courses.objects.all()
-        dishes = Dishes.objects.all()
-
-        return render(request, 'staff_menu-list.html', {
-            'courses': courses, 
-            'dishes': dishes,
+            'table_number': table_number  # ส่งเลขโต๊ะหรือ None ไป template
         })
 
 class OrderHistoryView(View):
@@ -52,27 +49,30 @@ class OrderHistoryView(View):
             'no_history': no_history,
         })
 
-class AddToCartView(View):
-    def post(self, request, table_number):
-        # รับข้อมูลจากฟอร์ม
-        dish_id = request.POST.get('dish_id')
-        amount = request.POST.get('amount')
-        
-        # ดึงข้อมูลเมนู
-        dish = Dishes.objects.get(pk=dish_id)
-        
+class ViewCartView(View):
+    def get(self, request, table_number):
         # ดึงข้อมูลโต๊ะ
         table = Tables.objects.get(number=table_number)
         
-        # ตรวจสอบว่าโต๊ะนี้มีการสั่งอาหารหรือยัง
-        table_cart, created = TableCarts.objects.get_or_create(table=table, create_date=None)
-        
-        # สร้างรายการสั่งอาหาร
-        table_cart_item, created = TableCartItems.objects.get_or_create(tableOrder=table_cart, dish=dish)
-        table_cart_item.amount = amount
-        table_cart_item.save()
-        
-        return redirect('menu_list', table_number=table_number)
+        # ดึงข้อมูลรายการอาหารในตะกร้า
+        table_cart = TableCarts.objects.filter(table=table).first()
+        cart_items = []
+        total_amount = 0
+
+        if table_cart:
+            cart_items = TableCartItems.objects.filter(table_order=table_cart)
+            # คำนวณยอดรวม
+            total_amount = sum(item.dish.price * item.amount for item in cart_items)
+
+            # เพิ่มยอดรวมของแต่ละรายการใน cart_items
+            for item in cart_items:
+                item.total_price = item.dish.price * item.amount  # เพิ่มยอดรวมของแต่ละรายการ
+
+        return render(request, 'cart.html', {
+            'table': table,
+            'cart_items': cart_items,
+            'total_amount': total_amount  # ส่งยอดรวมไปยัง template
+        })
 
 class FromAddMenuView(View):
     def get(self, request):
