@@ -41,7 +41,13 @@
                             {{ dish.price }} บาท
                         </div>
 
-                        <button class="btn-add-cart">เพิ่มลงตะกร้า</button>
+                        <!-- ฟอร์มส่งข้อมูลไปยัง View เพื่อเพิ่มลงตะกร้า -->
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                            <input type="number" name="amount" value="1" min="1">
+                            <button type="submit" class="btn-add-cart">เพิ่มลงตะกร้า</button>
+                        </form>
                     </div>
                     {% endfor %}
                 </div>

@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="{% static 'history/style.css' %}">
 </head>
 <body>
+
+    {% include 'nav.html' %}
+
     <h1>ประวัติการสั่งอาหารของโต๊ะ {{ table_number }}</h1>
 
     <div class="order-history-container">
@@ -25,7 +28,6 @@
                         <tr>
                             <th>ชื่ออาหาร</th>
                             <th>จำนวน</th>
-                            <th></th>
                             <th>สถานะ</th>
                         </tr>
                     </thead>
@@ -35,7 +37,6 @@
                         <tr>
                             <td>{{ item.dish.name }}</td>
                             <td>{{ item.amount }}</td>
-                            <td><button>Edit status</button></td>
                             <td>{{ item.get_status_display }}</td>
                         </tr>
                         {% endfor %}
