@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - โต๊ะ {{ table_number }}</title>
+    <link rel="stylesheet" href="{% static 'menu-list/style.css' %}">
+</head>
+<body>
+
+    <!-- เรียกใช้งาน Navbar -->
+    {% include 'nav.html' %}
+
+    <!-- ส่วนเนื้อหาของเมนู -->
+    <div class="content">
+        {% if table_number %}
+        <h1>เมนูอาหารสำหรับโต๊ะ {{ table_number }}</h1>
+        {% else %}
+        <h1>เมนูอาหารสำหรับพนักงาน</h1>
+        {% endif %}
+
+        <div class="menu-container">
+            <!-- วนลูปแสดงหมวดหมู่อาหาร (Courses) -->
+            {% for course in courses %}
+            <div class="course">
+                <h2>{{ course.name }}</h2>
+                <div class="dishes">
+                    <!-- วนลูปแสดงจานอาหารที่เกี่ยวข้องในแต่ละหมวดหมู่ -->
+                    {% for dish in course.dishes_set.all %}
+                    <div class="dish-card">
+                        <!-- ถ้ามีรูปภาพ ให้แสดงรูป -->
+                        {% if dish.image %}
+                        <img src="{{ dish.image.url }}" alt="{{ dish.name }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/300x200" alt="No Image Available">
+                        {% endif %}
+                        <h3>{{ dish.name }}</h3>
+                        <p>{{ dish.description }}</p>
+                        <div class="price">
+                            {{ dish.price }} บาท
+                        </div>
+
+                        <!-- ฟอร์มส่งข้อมูลไปยัง View เพื่อเพิ่มลงตะกร้า -->
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                            <input type="number" name="amount" value="1" min="1">
+                            <button type="submit" class="btn-add-cart">เพิ่มลงตะกร้า</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

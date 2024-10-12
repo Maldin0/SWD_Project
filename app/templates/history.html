@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการสั่งอาหาร</title>
+    <link rel="stylesheet" href="{% static 'history/style.css' %}">
+</head>
+<body>
+
+    {% include 'nav.html' %}
+
+    <h1>ประวัติการสั่งอาหารของโต๊ะ {{ table_number }}</h1>
+
+    <div class="order-history-container">
+        {% if no_history %}
+            <p>{{ no_history }}</p>
+        {% else %}
+            <!-- วนลูปแสดงรายการคำสั่งซื้อ -->
+            {% for order in orders %}
+            <div class="order">
+                <h2>วันที่สั่ง: {{ order.order_date }}</h2>
+                <p>หมายเหตุ: {{ order.remark|default:'ไม่มีหมายเหตุ' }}</p>
+
+                <table class="order-items-table">
+                    <thead>
+                        <tr>
+                            <th>ชื่ออาหาร</th>
+                            <th>จำนวน</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- วนลูปแสดงรายการอาหารที่สั่งในคำสั่งซื้อนั้น -->
+                        {% for item in order.orderitems_set.all %}
+                        <tr>
+                            <td>{{ item.dish.name }}</td>
+                            <td>{{ item.amount }}</td>
+                            <td>{{ item.get_status_display }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</body>
+</html>

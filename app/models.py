@@ -1,4 +1,5 @@
 from django.db import models
+
 # Create your models here.
 
 class Tables(models.Model):
@@ -8,6 +9,9 @@ class Tables(models.Model):
 
     number = models.IntegerField()
     status = models.CharField(choices=Status.choices, default=Status.AVAILABLE)
+
+    def __str__(self):
+        return str(self.number)
 
 
 class Courses(models.Model):
@@ -28,7 +32,7 @@ class TableCarts(models.Model):
 
 
 class TableCartItems(models.Model):
-    tableOrder = models.ForeignKey(TableCarts, on_delete=models.CASCADE)
+    table_order  = models.ForeignKey(TableCarts, on_delete=models.CASCADE)
     dish = models.ForeignKey(Dishes, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(default=1)
 
@@ -41,6 +45,7 @@ class Orders(models.Model):
 
 class OrderItems(models.Model):
     class Status(models.TextChoices):
+        NOT_FINISH = 'NOT_FINISH'
         PENDING = 'PENDING'
         COOKING = 'COOKING'
         SERVING = 'SERVING'
