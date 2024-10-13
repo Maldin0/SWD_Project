@@ -17,13 +17,19 @@ class Tables(models.Model):
 class Courses(models.Model):
     name = models.CharField(max_length=150)
 
+    def __str__(self):
+        return self.name
+
 
 class Dishes(models.Model):
     name = models.CharField(max_length=150)
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='dishes/', null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     course = models.ManyToManyField(Courses)
+
+    def __str__(self):
+        return self.name
 
 
 class TableCarts(models.Model):

@@ -12,7 +12,6 @@
     <!-- เรียกใช้งาน Navbar -->
     {% include 'nav.html' %}
 
-    <!-- ส่วนเนื้อหาของเมนู -->
     <div class="content">
         {% if table_number %}
         <h1>เมนูอาหารสำหรับโต๊ะ {{ table_number }}</h1>
@@ -20,38 +19,71 @@
         <h1>เมนูอาหารสำหรับพนักงาน</h1>
         {% endif %}
 
-        <div class="menu-container">
-            <!-- วนลูปแสดงหมวดหมู่อาหาร (Courses) -->
-            {% for course in courses %}
-            <div class="course">
-                <h2>{{ course.name }}</h2>
-                <div class="dishes">
-                    <!-- วนลูปแสดงจานอาหารที่เกี่ยวข้องในแต่ละหมวดหมู่ -->
-                    {% for dish in course.dishes_set.all %}
-                    <div class="dish-card">
-                        <!-- ถ้ามีรูปภาพ ให้แสดงรูป -->
-                        {% if dish.image %}
-                        <img src="{{ dish.image.url }}" alt="{{ dish.name }}">
-                        {% else %}
-                        <img src="https://via.placeholder.com/300x200" alt="No Image Available">
-                        {% endif %}
-                        <h3>{{ dish.name }}</h3>
-                        <p>{{ dish.description }}</p>
-                        <div class="price">
-                            {{ dish.price }} บาท
-                        </div>
+        <!-- ฟอร์มสำหรับเพิ่มเมนูอาหารใหม่ -->
+            <form method="post" action="{% url 'add_dish' %}">
+            {% csrf_token %}
+            <a href="{% url 'add_dish' %}"><button>เพิ่มเมนูอาหารใหม่</button></a>
+        </form>
 
-                        <!-- ฟอร์มส่งข้อมูลไปยัง View เพื่อเพิ่มลงตะกร้า -->
-                        <form method="post" action="">
-                            {% csrf_token %}
-                            <input type="hidden" name="dish_id" value="{{ dish.id }}">
-                            <input type="number" name="amount" value="1" min="1">
-                            <button type="submit" class="btn-add-cart">เพิ่มลงตะกร้า</button>
-                        </form>
+        <!-- ฟอร์มสำหรับค้นหาและกรองเมนู -->
+        <form method="get" action="">
+            <input type="text" name="search" placeholder="ค้นหาเมนูอาหาร..." value="{{ request.GET.search }}">
+            <select name="course_filter">
+                <option value="">เลือกหมวดหมู่</option>
+                {% for course in courses %}
+                    <option value="{{ course.id }}" {% if request.GET.course_filter == course.id|stringformat:"s" %}selected{% endif %}>
+                        {{ course.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit">ค้นหา</button>
+        </form>
+
+        <!-- แสดงหมวดหมู่และจานอาหาร -->
+        <div class="menu-container">
+            {% for course in courses %}
+                <div class="course">
+                    <h2>{{ course.name }}</h2>
+                    <div class="dishes">
+                        <!-- วนลูปแสดงจานอาหารที่เกี่ยวข้องในแต่ละหมวดหมู่ -->
+                        {% for dish in dishes %}
+                            {% if course in dish.course.all %}
+                            <div class="dish-card">
+                                <!-- ถ้ามีรูปภาพ ให้แสดงรูป -->
+                                {% if dish.image %}
+                                    <img src="../../media/{{ dish.image }}" alt="{{ dish.name }}">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/300x200" alt="No Image Available">
+                                {% endif %}
+                                <h3>{{ dish.name }}</h3>
+                                <p>{{ dish.description }}</p>
+                                <div class="price">{{ dish.price }} บาท</div>
+
+                                <!-- ฟอร์มส่งข้อมูลไปยัง View เพื่อเพิ่มลงตะกร้า -->
+                                <form method="post" action="">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                    <input type="number" name="amount" value="1" min="1">
+                                    <button type="submit" class="btn-add-cart">เพิ่มลงตะกร้า</button>
+                                </form>
+
+                                <!-- ฟอร์มสำหรับแก้ไข และลบจานอาหาร -->
+                                <form method="get" action="{% url 'edit_dish' dish.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                    <button type="submit">แก้ไข</button>
+                                </form>
+
+                                <form method="post" action="{% url 'delete_dish' dish.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                    <button type="submit">ลบ</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
-            </div>
             {% endfor %}
         </div>
     </div>

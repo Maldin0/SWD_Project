@@ -4,23 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เพิ่มเมนูอาหาร</title>
+    <title>{% if edit %}แก้ไขเมนูอาหาร{% else %}เพิ่มเมนูอาหาร{% endif %}</title>
     <link rel="stylesheet" href="{% static 'menu-form/style.css' %}">
 </head>
 <body>
 
-    <!-- เดี๋ยวมาเปิด Navbar ตอนทำ authen -->
     {% include 'nav.html' %}
 
     <div class="menu-form-container">
-        <h2>เพิ่มเมนูอาหารใหม่</h2>
-        <form method="post">
+        <h2>
+            {% if edit %}
+            แก้ไขเมนูอาหาร
+            {% else %}
+            เพิ่มเมนูอาหารใหม่
+            {% endif %}
+        </h2>
+        <form method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
-            <!-- แสดงฟอร์ม -->
             {{ form.as_p }}
             <div class="form-actions">
-                <button type="submit" class="btn">บันทึกเมนู</button>
-                <a href="{% url 'menu_list' %}" class="btn btn-cancel">ยกเลิก</a>
+                <button type="submit" class="btn">{% if edit %}บันทึกการแก้ไข{% else %}บันทึกเมนู{% endif %}</button>
+                <a href="{% url 'staff_menu_list' %}" class="btn btn-cancel">ยกเลิก</a>
             </div>
         </form>
 

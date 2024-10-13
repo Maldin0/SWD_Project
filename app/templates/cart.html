@@ -15,24 +15,28 @@
 
     <div class="cart-container">
         {% if cart_items %}
-        <ul class="cart-items">
-            {% for item in cart_items %}
-            <li class="cart-item">
-                <img src="{% if item.dish.image %}{{ item.dish.image.url }}{% else %}https://via.placeholder.com/100x100{% endif %}" alt="{{ item.dish.name }}">
-                <div class="item-details">
-                    <h3>{{ item.dish.name }}</h3>
-                    <p>จำนวน: {{ item.amount }}</p>
-                    <p>ราคา: {{ item.dish.price }} บาท</p>
-                    <p>รวม: {{ item.total_price }} บาท</p>  <!-- ใช้ค่า total_price ที่คำนวณใน view -->
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <ul class="cart-items">
+                {% for item in cart_items %}
+                <li class="cart-item">
+                    <img src="{% if item.dish.image %}{{ item.dish.image.url }}{% else %}https://via.placeholder.com/100x100{% endif %}" alt="{{ item.dish.name }}">
+                    <div class="item-details">
+                        <h3>{{ item.dish.name }}</h3>
+                        <p>จำนวน: {{ item.amount }}</p>
+                        <p>ราคา: {{ item.dish.price }} บาท</p>
+                        <p>รวม: {{ item.total_price }} บาท</p>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
 
-        <div class="cart-total">
-            <h3>ยอดรวมทั้งหมด: {{ total_amount }} บาท</h3>
-            <a href="#" class="btn checkout-btn">ยืนยันรายการอาหาร</a>
-        </div>
+            <div class="cart-total">
+                <h3>ยอดรวมทั้งหมด: {{ total_amount }} บาท</h3>
+                <textarea name="remark" rows="4" cols="50" placeholder="หมายเหตุสำหรับการสั่งอาหาร"></textarea>
+                <button type="submit" class="btn checkout-btn">ยืนยันรายการอาหาร</button>
+            </div>
+        </form>
         {% else %}
         <p>ยังไม่มีสินค้าในตะกร้า</p>
         {% endif %}

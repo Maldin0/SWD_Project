@@ -12,9 +12,9 @@ INSERT INTO app_courses (id, name) VALUES
 
 -- Insert sample data for 'Dishes'
 INSERT INTO app_dishes (id, name, description, image, price) VALUES 
-(1, 'Caesar Salad', 'Fresh salad with Caesar dressing', NULL, 120.00),
-(2, 'Grilled Chicken', 'Chicken grilled with herbs', NULL, 250.00),
-(3, 'Chocolate Cake', 'Rich chocolate dessert', NULL, 150.00);
+(1, 'Caesar Salad', 'Fresh salad with Caesar dressing', 'dishes/shika.jpg', 120.00),
+(2, 'Grilled Chicken', 'Chicken grilled with herbs', 'dishes/march_7.jpg', 250.00),
+(3, 'Chocolate Cake', 'Rich chocolate dessert', 'dishes/shika.jpg', 150.00);
 
 -- Insert dish-course relationships in 'Dishes_courses' (many-to-many relation)
 INSERT INTO app_dishes_course (dishes_id, courses_id) VALUES 
