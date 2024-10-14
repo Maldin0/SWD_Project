@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Tables, Dishes, TableCarts, TableCartItems, Orders, OrderItems, Courses
 from django.http import Http404
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
@@ -14,7 +15,26 @@ from .forms import DishesForm, DishesFilterForm
 from datetime import date, datetime
 
 # Create your views here.
-class MenuListView(View):
+class LoginView(View):
+    def get(self, request):
+        form = AuthenticationForm()
+        return render(request, 'login.html', {"form": form})
+    
+    def post(self, request):
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user() 
+            login(request,user)
+            return redirect('menu_list')  
+
+        return render(request,'login.html', {"form": form})
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('login')
+
+class MenuListView(PermissionRequiredMixin, View):
     def get(self, request, table_number=None):
         # ดึงข้อมูลหมวดหมู่ทั้งหมด
         courses = Courses.objects.all()
@@ -37,13 +57,28 @@ class MenuListView(View):
         if table_number is not None:
             table = Tables.objects.get(number=table_number)
 
-        return render(request, 'menu-list.html', {
-            'courses': courses, 
-            'dishes': dishes,
-            'table_number': table,
-            'search_query': search_query,  # ส่ง search query ไป template
-            'course_filter': course_filter,  # ส่ง course filter ไป template
-        })
+        # ตรวจสอบกลุ่มผู้ใช้และสิทธิ์การเข้าถึง
+        if request.user.is_authenticated:
+            if request.user.groups.filter(name__in=['staff', 'owner']).exists():
+                return render(request, 'menu-list.html', {
+                    'courses': courses, 
+                    'dishes': dishes,
+                    'table_number': table,
+                    'search_query': search_query,  # ส่ง search query ไป template
+                    'course_filter': course_filter,  # ส่ง course filter ไป template
+                })
+        else:
+            # ถ้าเป็น customer ให้แสดงเมนูได้โดยไม่ต้องล็อกอิน
+            return render(request, 'menu-list.html', {
+                'courses': courses, 
+                'dishes': dishes,
+                'table_number': table,
+                'search_query': search_query,  # ส่ง search query ไป template
+                'course_filter': course_filter,  # ส่ง course filter ไป template
+            })
+
+        # ถ้าผู้ใช้ไม่ได้ล็อกอินและไม่ใช่กลุ่มที่มีสิทธิ์ รีไดเร็กไปหน้า login
+        return redirect('login')
 
     def post(self, request, table_number):
         # รับข้อมูลจากฟอร์ม
@@ -133,7 +168,7 @@ class OrderHistoryView(View):
         })
 
 
-class ViewCartView(View):
+class CartView(View):
     def get(self, request, table_number):
         # ดึงข้อมูลโต๊ะ
         table = Tables.objects.get(number=table_number)
