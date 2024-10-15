@@ -1,17 +1,19 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views import View
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Tables, Dishes, TableCarts, TableCartItems, Orders, OrderItems, Courses
 from django.http import Http404
+from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.db.models import Q
-from .forms import DishesForm, DishesFilterForm
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Tables, Dishes, TableCarts, TableCartItems, Orders, OrderItems, Courses
+from .forms import DishesForm, DishesFilterForm, CustomUserCreationForm
 from datetime import date, datetime
 
 # Create your views here.
@@ -25,7 +27,7 @@ class LoginView(View):
         if form.is_valid():
             user = form.get_user() 
             login(request,user)
-            return redirect('menu_list')  
+            return redirect('staff_menu_list')
 
         return render(request,'login.html', {"form": form})
 
@@ -34,7 +36,7 @@ class LogoutView(View):
         logout(request)
         return redirect('login')
 
-class MenuListView(PermissionRequiredMixin, View):
+class MenuListView(View):
     def get(self, request, table_number=None):
         # ดึงข้อมูลหมวดหมู่ทั้งหมด
         courses = Courses.objects.all()
@@ -55,30 +57,19 @@ class MenuListView(PermissionRequiredMixin, View):
         # ถ้ามี table_number จะให้แสดงเมนูสำหรับโต๊ะนั้น
         table = None
         if table_number is not None:
-            table = Tables.objects.get(number=table_number)
+            try:
+                table = Tables.objects.get(number=table_number)
+            except Tables.DoesNotExist:
+                return HttpResponse("โต๊ะไม่ถูกต้อง", status=404)
 
-        # ตรวจสอบกลุ่มผู้ใช้และสิทธิ์การเข้าถึง
-        if request.user.is_authenticated:
-            if request.user.groups.filter(name__in=['staff', 'owner']).exists():
-                return render(request, 'menu-list.html', {
-                    'courses': courses, 
-                    'dishes': dishes,
-                    'table_number': table,
-                    'search_query': search_query,  # ส่ง search query ไป template
-                    'course_filter': course_filter,  # ส่ง course filter ไป template
-                })
-        else:
-            # ถ้าเป็น customer ให้แสดงเมนูได้โดยไม่ต้องล็อกอิน
-            return render(request, 'menu-list.html', {
-                'courses': courses, 
-                'dishes': dishes,
-                'table_number': table,
-                'search_query': search_query,  # ส่ง search query ไป template
-                'course_filter': course_filter,  # ส่ง course filter ไป template
-            })
-
-        # ถ้าผู้ใช้ไม่ได้ล็อกอินและไม่ใช่กลุ่มที่มีสิทธิ์ รีไดเร็กไปหน้า login
-        return redirect('login')
+        # แสดงเมนูสำหรับลูกค้า โดยไม่ต้องล็อกอิน
+        return render(request, 'menu-list.html', {
+            'courses': courses, 
+            'dishes': dishes,
+            'table_number': table,
+            'search_query': search_query,
+            'course_filter': course_filter,
+        })
 
     def post(self, request, table_number):
         # รับข้อมูลจากฟอร์ม
@@ -111,8 +102,37 @@ class MenuListView(PermissionRequiredMixin, View):
             return JsonResponse({"error": f"เกิดข้อผิดพลาด: {str(e)}"}, status=400)
         return redirect('menu_list', table_number=table_number)
 
+class StaffMenuListView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = '/login/'
+    permission_required = ['app.view_dishes', 'app.view_courses']
+    def get(self, request):
+            # ดึงข้อมูลหมวดหมู่ทั้งหมด
+            courses = Courses.objects.all()
+            dishes = Dishes.objects.all()
 
-class AddDishView(View):
+            # ค่าที่ค้นหาหรือกรองจาก request
+            search_query = request.GET.get('search', '')
+            course_filter = request.GET.get('course_filter', '')
+
+            # Filter by search query (ถ้ามีการค้นหา)
+            if search_query:
+                dishes = dishes.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
+
+            # Filter by course (ถ้าเลือกหมวดหมู่)
+            if course_filter:
+                dishes = dishes.filter(course__id=course_filter)
+
+            return render(request, 'menu-list.html', {
+                'courses': courses,
+                'dishes': dishes,
+                'search_query': search_query,
+                'course_filter': course_filter,
+            })
+
+
+class AddDishView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = '/login/'
+    permission_required = ['app.add_dishes', 'app.add_courses']
     def get(self, request):
         form = DishesForm()
         return render(request, 'menu-form.html', {'form': form})
@@ -124,7 +144,9 @@ class AddDishView(View):
             return redirect('staff_menu_list')
         return render(request, 'menu-form.html', {'form': form})
 
-class EditDishView(View):
+class EditDishView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = '/login/'
+    permission_required = ['app.change_dishes', 'app.change_courses']
     def get(self, request, dish_id):
         # ดึงข้อมูลเมนูจากฐานข้อมูล
         dish = Dishes.objects.get(pk=dish_id)
@@ -142,7 +164,9 @@ class EditDishView(View):
             return redirect('staff_menu_list')  # กลับไปยังหน้าแสดงรายการเมนูหลังบันทึกสำเร็จ
         return render(request, 'menu-form.html', {'form': form})
 
-class DeleteDishView(View):
+class DeleteDishView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = '/login/'
+    permission_required = ['app.delete_dishes', 'app.delete_courses']
     def post(self, request, dish_id):
         # ดึงข้อมูลเมนูที่ต้องการลบ
         dish = Dishes.objects.get(pk=dish_id)

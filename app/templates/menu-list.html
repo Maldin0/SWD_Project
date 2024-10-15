@@ -20,10 +20,12 @@
         {% endif %}
 
         <!-- ฟอร์มสำหรับเพิ่มเมนูอาหารใหม่ -->
-            <form method="post" action="{% url 'add_dish' %}">
+        {% if perms.app.add_dishes and perms.app.add_courses %}
+        <form method="post" action="{% url 'add_dish' %}">
             {% csrf_token %}
-            <a href="{% url 'add_dish' %}"><button>เพิ่มเมนูอาหารใหม่</button></a>
+            <button>เพิ่มเมนูอาหารใหม่</button>
         </form>
+        {% endif %}
 
         <!-- ฟอร์มสำหรับค้นหาและกรองเมนู -->
         <form method="get" action="">
@@ -60,25 +62,31 @@
                                 <div class="price">{{ dish.price }} บาท</div>
 
                                 <!-- ฟอร์มส่งข้อมูลไปยัง View เพื่อเพิ่มลงตะกร้า -->
-                                <form method="post" action="">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="dish_id" value="{{ dish.id }}">
-                                    <input type="number" name="amount" value="1" min="1">
-                                    <button type="submit" class="btn-add-cart">เพิ่มลงตะกร้า</button>
-                                </form>
+                                {% if not request.user.is_staff %}
+                                    <form method="post" action="">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                        <input type="number" name="amount" value="1" min="1">
+                                        <button type="submit" class="btn-add-cart">เพิ่มลงตะกร้า</button>
+                                    </form>
+                                {% endif %}
 
                                 <!-- ฟอร์มสำหรับแก้ไข และลบจานอาหาร -->
+                                {% if perms.app.change_dishes and perms.app.change_courses %}
                                 <form method="get" action="{% url 'edit_dish' dish.id %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="dish_id" value="{{ dish.id }}">
                                     <button type="submit">แก้ไข</button>
                                 </form>
+                                {% endif %}
 
+                                {% if perms.app.delete_dishes and perms.app.delete_courses %}
                                 <form method="post" action="{% url 'delete_dish' dish.id %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="dish_id" value="{{ dish.id }}">
                                     <button type="submit">ลบ</button>
                                 </form>
+                                {% endif %}
                             </div>
                             {% endif %}
                         {% endfor %}

@@ -1,5 +1,7 @@
 from django import forms
 from django.forms import ModelForm
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from decimal import Decimal
 from .models import Dishes, Tables, TableCarts, TableCartItems, Orders, OrderItems, Courses
 
@@ -13,19 +15,18 @@ class DishesForm(ModelForm):
             'price',
             'course'
         ]
-        widgets = {
-            'description': forms.widgets.Textarea(attrs={'rows': 4}),
-            'course': forms.widgets.SelectMultiple(attrs={'class': 'form-select'})
-        }
 
     name = forms.CharField(required=True) 
-    description = forms.CharField(required=False) 
+    description = forms.CharField(
+        required=False,
+        widget=forms.widgets.Textarea(attrs={'rows': 4})
+    ) 
     image = forms.ImageField(required=False) 
     price = forms.DecimalField(required=True) 
     course = forms.ModelMultipleChoiceField(
         queryset=Courses.objects.all(),
         required=True,
-        help_text="กด Ctrl หรือ Shift เพื่อเลือกหลายรายการ"
+        widget=forms.CheckboxSelectMultiple(),  # ใช้ CheckboxSelectMultiple สำหรับแสดง checkbox
     )
     
     def clean(self):
@@ -41,7 +42,11 @@ class DishesForm(ModelForm):
 class DishesFilterForm(forms.ModelForm):
     class Meta:
         model = Dishes
-        fields = ['name', 'course', 'price']  # ฟิลด์ที่ต้องการใช้ในฟอร์ม
+        fields = [
+            'name',
+            'course',
+            'price'
+        ]
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'ค้นหาเมนูอาหาร'}),
             'course': forms.Select(attrs={'class': 'form-select'}),
@@ -61,3 +66,20 @@ class DishesFilterForm(forms.ModelForm):
             self.add_error('price_max', 'ราคาสูงสุดต้องมากกว่าราคาขั้นต่ำ')
 
         return cleaned_data
+
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+    
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Email already exists")
+    
+        return email
