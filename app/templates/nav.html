@@ -20,7 +20,12 @@
                 {% endif %}
             {% endif %}
 
-            {% if request.user.is_authenticated %}
+            <!-- ปุ่มสำหรับพนักงานเข้าสู่รายชื่อผู้ใช้ -->
+            {% if request.user.is_authenticated and request.user.is_staff and request.user.groups.filter(name='owner').exists %}
+            <a href="{% url 'user_list' %}" class="navbar-btn">ดูรายชื่อผู้ใช้</a>
+            {% endif %}
+
+            {% if request.user.is_authenticated and request.user.is_staff %}
             <a href="{% url 'logout' %}">
                 <button type="submit" class="navbar-btn logout-btn">ออกจากระบบ</button>
             </a>
