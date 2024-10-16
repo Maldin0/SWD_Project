@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.db.models import Q
 from .models import Tables, Dishes, TableCarts, TableCartItems, Orders, OrderItems, Courses
-from .forms import DishesForm, DishesFilterForm, UserProfileForm
+from .forms import DishesForm, DishesFilterForm, UserProfileForm, UserCreationForm
 from datetime import date, datetime
 
 # Create your views here.
@@ -247,21 +247,23 @@ class CartView(View):
         # Redirect ไปหน้าอื่นหลังจากยืนยันเสร็จแล้ว
         return redirect('order_history', table_number=table_number)
 
-class ProfileView(LoginRequiredMixin, View):
+class ProfileView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = '/login/'
+    permission_required = ['auth.view_user']
     def get(self, request):
         if request.user.is_authenticated:
             user = User.objects.get(username=request.user)
             return render(request, 'user_profile.html', {'user': user})
         return redirect('login') 
 
-class UserProfileUpdateView(LoginRequiredMixin, View):
+class UserProfileUpdateView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = '/login/'
+    permission_required = ['auth.change_user']
     def get(self, request):
         user = request.user
         form = UserProfileForm(instance=user)
 
-        return render(request, 'user_form.html', {'form': form})
+        return render(request, 'profile_form.html', {'form': form})
 
     def post(self, request):
         user = request.user
@@ -271,4 +273,35 @@ class UserProfileUpdateView(LoginRequiredMixin, View):
             form.save()
             return redirect('profile')
         else:
-            return render(request, 'user_form.html', {'form': form})
+            return render(request, 'profile_form.html', {'form': form})
+
+class UserListView(LoginRequiredMixin, View):
+    login_url = '/login/'  # ถ้ายังไม่ได้เข้าสู่ระบบ
+    def get(self, request):
+        users = User.objects.all()  # ดึงข้อมูลผู้ใช้ทั้งหมด
+        return render(request, 'user_list.html', {'users': users})
+
+class UserCreateView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = '/login/'
+    permission_required = ['app.add_user']  # ปรับตาม permission ที่คุณกำหนด
+
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request, 'user_form.html', {'form': form})
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('user_list')  # เปลี่ยนไปที่หน้ารายชื่อผู้ใช้
+        return render(request, 'user_form.html', {'form': form})
+
+class UserDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = '/login/'
+    permission_required = ['app.delete_user']  # ปรับตาม permission ที่คุณกำหนด
+
+    def post(self, request, user_id):
+        # ดึงข้อมูลผู้ใช้ที่ต้องการลบ
+        user = User.objects.get(pk=user_id)
+        user.delete()  # ลบผู้ใช้ออกจากฐานข้อมูล
+        return redirect('user_list')  # กลับไปยังหน้าแสดงรายชื่อผู้ใช้

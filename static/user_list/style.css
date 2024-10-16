@@ -1,0 +1,41 @@
+/* ปรับรูปแบบของ container หลัก */
+.user-list-container {
+    max-width: 800px; /* กำหนดความกว้างสูงสุด */
+    margin: 20px auto; /* จัดกึ่งกลาง */
+    padding: 20px; /* ระยะห่างภายใน */
+    border: 1px solid #ccc; /* เส้นขอบ */
+    border-radius: 8px; /* มุมโค้ง */
+    background-color: #f9f9f9; /* สีพื้นหลัง */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* เงา */
+}
+
+/* ปรับรูปแบบของหัวเรื่อง */
+.user-list-container h2 {
+    text-align: center; /* จัดกลาง */
+    color: #333; /* สีของข้อความ */
+}
+
+/* ปรับรูปแบบของตาราง */
+table {
+    width: 100%; /* ให้ตารางมีความกว้างเต็มที่ */
+    border-collapse: collapse; /* ไม่ให้เส้นขอบซ้อนกัน */
+}
+
+/* ปรับรูปแบบของหัวตาราง */
+th {
+    background-color: #007BFF; /* สีพื้นหลังของหัวตาราง */
+    color: white; /* สีของข้อความ */
+    padding: 10px; /* ระยะห่างภายใน */
+}
+
+/* ปรับรูปแบบของเซลล์ในตาราง */
+td {
+    border: 1px solid #ccc; /* เส้นขอบ */
+    padding: 10px; /* ระยะห่างภายใน */
+    text-align: left; /* จัดข้อความไปทางซ้าย */
+}
+
+/* เปลี่ยนสีเมื่อโฮเวอร์ (hover) */
+tr:hover {
+    background-color: #f1f1f1; /* สีพื้นหลังเมื่อชี้ไปที่แถว */
+}

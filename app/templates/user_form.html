@@ -1,22 +1,28 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แก้ไขโปรไฟล์</title>
-    <link rel="stylesheet" href="{% static 'profile/style.css' %}">
+    <title>เพิ่มผู้ใช้</title>
 </head>
 <body>
-    {% include 'nav.html' %}
-    <div class="profile-container">
-        <h2>แก้ไขโปรไฟล์ของ {{ user.username }}</h2>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn">บันทึกการเปลี่ยนแปลง</button>
-        </form>
-        <a href="{% url 'profile' %}" class="btn">กลับ</a>
+    <h2>เพิ่มผู้ใช้ใหม่</h2>
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ form.as_p }} <!-- แสดงฟอร์มทั้งหมดในรูปแบบพารากราฟ -->
+        <button type="submit">บันทึก</button>
+    </form>
+
+    <!-- แสดงข้อผิดพลาดถ้ามี -->
+    {% if form.errors %}
+    <div class="error-messages">
+        <h3>พบข้อผิดพลาด:</h3>
+        <ul>
+            {% for field, errors in form.errors.items %}
+            <li>{{ field }}: {{ errors|striptags }}</li>
+            {% endfor %}
+        </ul>
     </div>
+    {% endif %}
 </body>
 </html>

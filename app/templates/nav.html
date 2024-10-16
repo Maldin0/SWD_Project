@@ -26,6 +26,11 @@
             <a href="{% url 'profile' %}" class="navbar-btn">profile</a>
             {% endif %}
 
+             <!-- ปุ่มดูรายชื่อผู้ใช้ -->
+            {% if request.user.is_authenticated and request.user.is_superuser %}
+            <a href="{% url 'user_list' %}" class="navbar-btn">ดูรายชื่อผู้ใช้</a>
+            {% endif %}
+
             {% if request.user.is_authenticated and request.user.is_staff %}
             <a href="{% url 'logout' %}">
                 <button type="submit" class="navbar-btn logout-btn">ออกจากระบบ</button>
@@ -34,4 +39,3 @@
         </div>
     </div>
 </nav>
-
