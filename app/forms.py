@@ -1,7 +1,6 @@
+from django.contrib.auth.models import User
 from django import forms
 from django.forms import ModelForm
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from decimal import Decimal
 from .models import Dishes, Tables, TableCarts, TableCartItems, Orders, OrderItems, Courses
 
@@ -66,3 +65,15 @@ class DishesFilterForm(forms.ModelForm):
             self.add_error('price_max', 'ราคาสูงสุดต้องมากกว่าราคาขั้นต่ำ')
 
         return cleaned_data
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        
+    # Add custom validation if needed
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('This email address is already in use.')
+        return email

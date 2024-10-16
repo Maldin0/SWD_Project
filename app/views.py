@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views import View
+from django.views.generic.edit import UpdateView
 from django.http import Http404
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
@@ -9,11 +10,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.db.models import Q
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from .models import Tables, Dishes, TableCarts, TableCartItems, Orders, OrderItems, Courses
-from .forms import DishesForm, DishesFilterForm, CustomUserCreationForm
+from .forms import DishesForm, DishesFilterForm, UserProfileForm
 from datetime import date, datetime
 
 # Create your views here.
@@ -248,3 +246,29 @@ class CartView(View):
 
         # Redirect ไปหน้าอื่นหลังจากยืนยันเสร็จแล้ว
         return redirect('order_history', table_number=table_number)
+
+class ProfileView(LoginRequiredMixin, View):
+    login_url = '/login/'
+    def get(self, request):
+        if request.user.is_authenticated:
+            user = User.objects.get(username=request.user)
+            return render(request, 'user_profile.html', {'user': user})
+        return redirect('login') 
+
+class UserProfileUpdateView(LoginRequiredMixin, View):
+    login_url = '/login/'
+    def get(self, request):
+        user = request.user
+        form = UserProfileForm(instance=user)
+
+        return render(request, 'user_form.html', {'form': form})
+
+    def post(self, request):
+        user = request.user
+        form = UserProfileForm(request.POST, instance=user)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+        else:
+            return render(request, 'user_form.html', {'form': form})

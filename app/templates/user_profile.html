@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรไฟล์ผู้ใช้</title>
+    <link rel="stylesheet" href="{% static 'profile/style.css' %}">
+</head>
+<body>
+    {% include 'nav.html' %}
+    <div class="profile-container">
+        <h2>โปรไฟล์ของ {{ user.username }}</h2>
+        <div class="profile-details">
+            <p><strong>ชื่อจริง:</strong> {{ user.first_name }}</p>
+            <p><strong>นามสกุล:</strong> {{ user.last_name }}</p>
+            <p><strong>อีเมล:</strong> {{ user.email }}</p>
+        </div>
+        <a href="{% url 'edit_profile' %}" class="btn">แก้ไขโปรไฟล์</a>
+    </div>
+</body>
+</html>
