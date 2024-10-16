@@ -277,6 +277,7 @@ class UserProfileUpdateView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 class UserListView(LoginRequiredMixin, View):
     login_url = '/login/'  # ถ้ายังไม่ได้เข้าสู่ระบบ
+    permission_required = ['auth.view_user']
     def get(self, request):
         users = User.objects.all()  # ดึงข้อมูลผู้ใช้ทั้งหมด
         return render(request, 'user_list.html', {'users': users})
