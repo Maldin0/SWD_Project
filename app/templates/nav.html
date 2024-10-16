@@ -9,13 +9,26 @@
         </div>
         <div class="navbar-links">
             <!-- ปุ่มดูประวัติการสั่งอาหาร -->
-            {% if table_number %}
-            <a href="{% url 'order_history' table_number %}" class="navbar-btn">ดูประวัติการสั่งอาหาร</a>
-            <!-- ปุ่มดูตะกร้าอาหาร -->
-            <a href="{% url 'view_cart' table_number %}" class="navbar-btn">ตะกร้า</a>
-            {% else %}
-            <a href="#" class="navbar-btn disabled">ดูประวัติการสั่งอาหาร</a> <!-- ห้ามคลิกเมื่อไม่มี table_number -->
-            <a href="#" class="navbar-btn disabled">ตะกร้า</a>
+            {% if not request.user.is_staff %}
+                {% if table_number %}
+                <a href="{% url 'order_history' table_number %}" class="navbar-btn">ดูประวัติการสั่งอาหาร</a>
+                <!-- ปุ่มดูตะกร้าอาหาร -->
+                <a href="{% url 'view_cart' table_number %}" class="navbar-btn">ตะกร้า</a>
+                {% else %}
+                <a href="#" class="navbar-btn disabled">ดูประวัติการสั่งอาหาร</a> <!-- ห้ามคลิกเมื่อไม่มี table_number -->
+                <a href="#" class="navbar-btn disabled">ตะกร้า</a>
+                {% endif %}
+            {% endif %}
+
+            <!-- ปุ่มสำหรับพนักงานเข้าสู่รายชื่อผู้ใช้ -->
+            {% if request.user.is_authenticated and request.user.is_staff and request.user.groups.filter(name='owner').exists %}
+            <a href="{% url 'user_list' %}" class="navbar-btn">ดูรายชื่อผู้ใช้</a>
+            {% endif %}
+
+            {% if request.user.is_authenticated and request.user.is_staff %}
+            <a href="{% url 'logout' %}">
+                <button type="submit" class="navbar-btn logout-btn">ออกจากระบบ</button>
+            </a>
             {% endif %}
         </div>
     </div>
