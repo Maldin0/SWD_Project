@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แก้ไขโปรไฟล์</title>
+    <link rel="stylesheet" href="{% static 'profile/style.css' %}">
+</head>
+<body>
+    {% include 'nav.html' %}
+    <div class="profile-container">
+        <h2>แก้ไขโปรไฟล์ของ {{ user.username }}</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">บันทึกการเปลี่ยนแปลง</button>
+        </form>
+        <a href="{% url 'profile' %}" class="btn">กลับ</a>
+    </div>
+</body>
+</html>

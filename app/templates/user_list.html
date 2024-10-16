@@ -5,19 +5,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายชื่อผู้ใช้</title>
+    <link rel="stylesheet" href="{% static 'user_list/style.css' %}">
 </head>
 <body>
-    <h1>รายชื่อผู้ใช้</h1>
-    <ul>
-        {% for user in users %}
-            <li>
-                {{ user.username }} 
-                <form method="post" action="{% url 'delete_user' user.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">ลบ</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+    {% include 'nav.html' %}
+    <div class="user-list-container">
+        <h2>รายชื่อผู้ใช้ทั้งหมด</h2>
+        <a href="{% url 'add_user' %}" class="btn">เพิ่มพนักงาน</a> <!-- ปุ่มเพิ่มพนักงาน -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ชื่อผู้ใช้</th>
+                    <th>อีเมล</th>
+                    <th>ชื่อจริง</th>
+                    <th>นามสกุล</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.last_name }}</td>
+                    <td>
+                        <form method="post" action="{% url 'delete_user' user.id %}"> <!-- URL สำหรับลบผู้ใช้ -->
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-delete">ลบ</button> <!-- ปุ่มลบ -->
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
+

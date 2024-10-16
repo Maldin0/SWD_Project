@@ -1,9 +1,9 @@
+from django.contrib.auth.models import User, Group
 from django import forms
 from django.forms import ModelForm
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from decimal import Decimal
 from .models import Dishes, Tables, TableCarts, TableCartItems, Orders, OrderItems, Courses
+from django.contrib.auth.forms import UserCreationForm
 
 class DishesForm(ModelForm):
     class Meta:
@@ -66,3 +66,50 @@ class DishesFilterForm(forms.ModelForm):
             self.add_error('price_max', 'ราคาสูงสุดต้องมากกว่าราคาขั้นต่ำ')
 
         return cleaned_data
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        
+    # Add custom validation if needed
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('อีเมลนี้ถูกใช้งานแล้ว')
+        return email
+
+class UserCreationForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=True, label='ชื่อจริง')
+    last_name = forms.CharField(max_length=30, required=True, label='นามสกุล')
+    email = forms.EmailField(required=True, label='อีเมล')
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('อีเมลนี้ถูกใช้งานแล้ว')
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("รหัสผ่านทั้งสองต้องตรงกัน")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_staff = True
+        if commit:
+            user.save()
+            # เพิ่มผู้ใช้เข้าไปในกลุ่ม Staff
+            staff_group = Group.objects.get(name='Staff')  # สร้างกลุ่มถ้ายังไม่มี
+            user.groups.add(staff_group)  # เพิ่มผู้ใช้เข้าไปในกลุ่ม
+        return user

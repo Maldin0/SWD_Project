@@ -1,0 +1,73 @@
+/* General styling for the profile page */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.profile-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.profile-details {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.profile-details p {
+    margin: 10px 0;
+    font-size: 18px;
+    color: #666;
+}
+
+.profile-details strong {
+    color: #333;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+    .profile-container {
+        margin: 20px;
+        padding: 15px;
+    }
+
+    .profile-container h2 {
+        font-size: 20px;
+    }
+
+    .profile-details p {
+        font-size: 16px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+}

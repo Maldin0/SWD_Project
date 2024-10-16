@@ -21,7 +21,13 @@
             {% endif %}
 
             <!-- ปุ่มสำหรับพนักงานเข้าสู่รายชื่อผู้ใช้ -->
-            {% if request.user.is_authenticated and request.user.is_staff and request.user.groups.filter(name='owner').exists %}
+            {% if request.user.is_authenticated and request.user.is_staff %}
+            <span>Welcome , {{ request.user.first_name }} {{ request.user.last_name }}</span>
+            <a href="{% url 'profile' %}" class="navbar-btn">profile</a>
+            {% endif %}
+
+             <!-- ปุ่มดูรายชื่อผู้ใช้ -->
+            {% if request.user.is_authenticated and request.user.is_superuser %}
             <a href="{% url 'user_list' %}" class="navbar-btn">ดูรายชื่อผู้ใช้</a>
             {% endif %}
 
