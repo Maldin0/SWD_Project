@@ -24,7 +24,7 @@ class Courses(models.Model):
 class Dishes(models.Model):
     name = models.CharField(max_length=150)
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='dishes/', null=True, blank=True)
+    image = models.ImageField(null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     course = models.ManyToManyField(Courses)
 

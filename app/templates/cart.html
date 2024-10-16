@@ -16,6 +16,12 @@
                         <p class="mb-1">ราคา: {{ item.dish.price }} บาท</p>
                         <p class="mb-1">รวม: {{ item.total_price }} บาท</p>
                     </div>
+
+                    <!-- ปุ่มลบ -->
+                    <form method="POST" action="{% url 'remove_from_cart' table.id item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn remove-btn">ลบ</button>
+                    </form>
                 </li>
                 {% endfor %}
             </ul>
@@ -27,6 +33,7 @@
                 </div>
                 <button type="submit" class="btn btn-success w-100">ยืนยันรายการอาหาร</button>
             </div>
+            
         </form>
         {% else %}
         <p class="text-center">ยังไม่มีสินค้าในตะกร้า</p>

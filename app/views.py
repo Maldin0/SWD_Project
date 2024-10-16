@@ -214,7 +214,7 @@ class CartView(View):
         return render(request, 'cart.html', {
             'table': table,
             'cart_items': cart_items,
-            'total_amount': total_amount,  # ส่งยอดรวมทั้งหมดไปยัง template
+            'total_amount': total_amount,
 
         })
 
@@ -247,6 +247,12 @@ class CartView(View):
         # Redirect ไปหน้าอื่นหลังจากยืนยันเสร็จแล้ว
         return redirect('order_history', table_number=table_number)
 
+class RemoveFromCartView(View):
+    def post(self, request, item_id):
+        cart_item = CartItem.objects.get(pk=item_id)
+        cart_item.delete()
+        return redirect('cart_view') 
+
 class ProfileView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = '/login/'
     permission_required = ['auth.view_user']
@@ -276,7 +282,7 @@ class UserProfileUpdateView(LoginRequiredMixin, PermissionRequiredMixin, View):
             return render(request, 'profile_form.html', {'form': form})
 
 class UserListView(LoginRequiredMixin, View):
-    login_url = '/login/'  # ถ้ายังไม่ได้เข้าสู่ระบบ
+    login_url = '/login/'
     permission_required = ['auth.view_user']
     def get(self, request):
         users = User.objects.all()  # ดึงข้อมูลผู้ใช้ทั้งหมด
@@ -284,7 +290,7 @@ class UserListView(LoginRequiredMixin, View):
 
 class UserCreateView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = '/login/'
-    permission_required = ['app.add_user']  # ปรับตาม permission ที่คุณกำหนด
+    permission_required = ['app.add_user']
 
     def get(self, request):
         form = UserCreationForm()
@@ -294,12 +300,12 @@ class UserCreateView(LoginRequiredMixin, PermissionRequiredMixin, View):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('user_list')  # เปลี่ยนไปที่หน้ารายชื่อผู้ใช้
+            return redirect('user_list')
         return render(request, 'user_form.html', {'form': form})
 
 class UserDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = '/login/'
-    permission_required = ['app.delete_user']  # ปรับตาม permission ที่คุณกำหนด
+    permission_required = ['app.delete_user']
 
     def post(self, request, user_id):
         # ดึงข้อมูลผู้ใช้ที่ต้องการลบ

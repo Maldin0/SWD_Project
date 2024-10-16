@@ -160,7 +160,7 @@
                             <div class="dish-card">
                                 <!-- ถ้ามีรูปภาพ ให้แสดงรูป -->
                                 {% if dish.image %}
-                                    <img src="../../media/{{ dish.image }}" alt="{{ dish.name }}">
+                                    <img src="{{ dish.image.url }}" alt="{{ dish.name }}">
                                 {% else %}
                                     <img src="https://via.placeholder.com/300x200" alt="No Image Available">
                                 {% endif %}

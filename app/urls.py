@@ -1,7 +1,5 @@
 from django.urls import path
 from . import views
-from django.conf import settings
-from django.conf.urls.static import static
 
 urlpatterns = [
     path('staff/menu/', views.StaffMenuListView.as_view(), name='staff_menu_list'),
@@ -13,6 +11,7 @@ urlpatterns = [
     path('table/<int:table_number>/', views.MenuListView.as_view(), name='menu_list'),
     path('table/<int:table_number>/history/', views.OrderHistoryView.as_view(), name='order_history'),
     path('table/<int:table_number>/cart/', views.CartView.as_view(), name='view_cart'),
+    path('table/<int:table_number>/cart/delete/<int:item_id>/',  views.RemoveFromCartView.as_view(), name='remove_from_cart'),
     path('users/', views.UserListView.as_view(), name='user_list'),
     path('users/add/', views.UserCreateView.as_view(), name='add_user'),
     path('users/delete/<int:user_id>/', views.UserDeleteView.as_view(), name='delete_user'),
