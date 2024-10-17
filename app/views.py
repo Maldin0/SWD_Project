@@ -44,11 +44,11 @@ class MenuListView(View):
         search_query = request.GET.get('search', '')
         course_filter = request.GET.get('course_filter', '')
 
-        # Filter by search query (ถ้ามีการค้นหา)
+        # Filter by search query
         if search_query:
             dishes = dishes.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
 
-        # Filter by course (ถ้าเลือกหมวดหมู่)
+        # Filter by course
         if course_filter:
             dishes = dishes.filter(course__id=course_filter)
 
@@ -203,26 +203,22 @@ class CartView(View):
         if table_cart:
             cart_items = TableCartItems.objects.filter(table_order=table_cart)
 
-            # เพิ่มยอดรวมของแต่ละรายการใน cart_items และคำนวณยอดรวมทั้งหมด
+            # คำนวณยอดรวมของแต่ละรายการใน cart_items และคำนวณยอดรวมทั้งหมด
             for item in cart_items:
                 # คำนวณยอดรวมของแต่ละรายการ
                 item.total_price = item.dish.price * item.amount  
-                
-                # เพิ่มยอดรวมทั้งหมด
                 total_amount += item.total_price
 
         return render(request, 'cart.html', {
             'table': table,
             'cart_items': cart_items,
             'total_amount': total_amount,
-
         })
 
     def post(self, request, table_number):
-        # ดึงข้อมูลโต๊ะ
         table = Tables.objects.get(number=table_number)
 
-        # สร้างรายการสั่งอาหาร (Order) ใหม่
+        # สร้าง Order ใหม่
         table_cart = TableCarts.objects.filter(table=table).first()
         remark = request.POST.get('remark', '')
         order = Orders.objects.create(
@@ -241,17 +237,10 @@ class CartView(View):
                 order=order,
             )
 
-        # ลบตะกร้าอาหารหลังจากยืนยันการสั่งแล้ว
+        # ลบรายการในตะกร้าและลบตะกร้า
         table_cart.delete()
 
-        # Redirect ไปหน้าอื่นหลังจากยืนยันเสร็จแล้ว
         return redirect('order_history', table_number=table_number)
-
-class RemoveFromCartView(View):
-    def post(self, request, item_id):
-        cart_item = CartItem.objects.get(pk=item_id)
-        cart_item.delete()
-        return redirect('cart_view') 
 
 class ProfileView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = '/login/'
@@ -310,9 +299,19 @@ class UserDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
     def post(self, request, user_id):
         # ดึงข้อมูลผู้ใช้ที่ต้องการลบ
         user = User.objects.get(pk=user_id)
-        user.delete()  # ลบผู้ใช้ออกจากฐานข้อมูล
-        return redirect('user_list')  # กลับไปยังหน้าแสดงรายชื่อผู้ใช้
-    
-class BaseView(View):
-    def get(self, request):
-        return render(request, 'base.html')
+        user.delete()
+        return redirect('user_list')
+
+class ChangeStatusView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = '/login/'
+    permission_required = ['app.change_orderitems']
+    def post(self, request, item_id):
+        item = OrderItems.objects.get(pk=item_id)
+        new_status = request.POST.get('status')
+        
+        # ตรวจสอบว่าสถานะที่ส่งมาถูกต้องหรือไม่
+        if new_status in [status[0] for status in OrderItems.Status.choices]:
+            item.status = new_status
+            item.save()
+
+        return redirect('order_history', table_number=item.order.table.number)
