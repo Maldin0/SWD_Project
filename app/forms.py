@@ -26,7 +26,7 @@ class DishesForm(ModelForm):
     course = forms.ModelMultipleChoiceField(
         queryset=Courses.objects.all(),
         required=True,
-        widget=forms.CheckboxSelectMultiple(),  # ใช้ CheckboxSelectMultiple สำหรับแสดง checkbox
+        widget=forms.CheckboxSelectMultiple(),
     )
     
     def clean(self):
@@ -72,7 +72,6 @@ class UserProfileForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'email']
         
-    # Add custom validation if needed
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():

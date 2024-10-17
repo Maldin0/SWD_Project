@@ -126,6 +126,10 @@
         <h1>เมนูอาหารสำหรับพนักงาน</h1>
         {% endif %}
 
+        {% if table_number and request.user.is_staff %}
+        <a href="{% url 'order_history' table_number %}" class="navbar-btn">เปลี่ยนสถานะ</a>
+        {% endif %}
+
         <!-- ฟอร์มสำหรับเพิ่มเมนูอาหารใหม่ -->
         {% if perms.app.add_dishes and perms.app.add_courses %}
         <form method="post" action="{% url 'add_dish' %}">
@@ -160,7 +164,7 @@
                             <div class="dish-card">
                                 <!-- ถ้ามีรูปภาพ ให้แสดงรูป -->
                                 {% if dish.image %}
-                                    <img src="../../media/{{ dish.image }}" alt="{{ dish.name }}">
+                                    <img src="{{ dish.image.url }}" alt="{{ dish.name }}">
                                 {% else %}
                                     <img src="https://via.placeholder.com/300x200" alt="No Image Available">
                                 {% endif %}

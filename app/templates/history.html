@@ -18,26 +18,43 @@
                 <div class="card-body">
                     <p>หมายเหตุ: {{ order.remark|default:'ไม่มีหมายเหตุ' }}</p>
 
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ชื่ออาหาร</th>
-                                <th>จำนวน</th>
-                                <th>สถานะ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- วนลูปแสดงรายการอาหารที่สั่งในคำสั่งซื้อนั้น -->
-                            {% for item in order.orderitems_set.all %}
-                            <tr>
-                                <td>{{ item.dish.name }}</td>
-                                <td>{{ item.amount }}</td>
-                                <td>{{ item.get_status_display }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                <table class="order-items-table">
+                    <thead>
+                        <tr>
+                            <th>ชื่ออาหาร</th>
+                            <th>จำนวน</th>
+                            <th>สถานะ</th>
+                            {% if request.user.is_authenticated and request.user.is_staff %}
+                                <th>เปลี่ยนสถานะ</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- วนลูปแสดงรายการอาหารที่สั่งในคำสั่งซื้อนั้น -->
+                        {% for item in order.orderitems_set.all %}
+                        <tr>
+                            <td>{{ item.dish.name }}</td>
+                            <td>{{ item.amount }}</td>
+                            <td>{{ item.get_status_display }}</td>
+                            {% if request.user.is_authenticated and request.user.is_staff %}
+                            <td>
+                                <form method="POST" action="{% url 'change_status' item.id %}">
+                                    {% csrf_token %}
+                                    <select name="status">
+                                        {% for status, label in item.Status.choices %}
+                                        <option value="{{ status }}" {% if item.status == status %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit">อัปเดต</button>
+                                </form>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             {% endfor %}
         {% endif %}
