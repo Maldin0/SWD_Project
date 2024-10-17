@@ -1,45 +1,14 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if edit %}แก้ไขเมนูอาหาร{% else %}เพิ่มเมนูอาหาร{% endif %}</title>
-    <link rel="stylesheet" href="{% static 'menu-form/style.css' %}">
-</head>
-<body>
-
-    {% include 'nav.html' %}
-
-    <div class="menu-form-container">
-        <h2>
-            {% if edit %}
-            แก้ไขเมนูอาหาร
-            {% else %}
-            เพิ่มเมนูอาหารใหม่
-            {% endif %}
-        </h2>
-        <form method="post" action="" enctype="multipart/form-data">
+{% extends "base.html" %}
+{% block title %}{% if edit %}แก้ไขเมนูอาหาร{% else %}เพิ่มเมนูอาหาร{% endif %}{% endblock %}
+{% block content %}
+    <div class="container p-5">
+        <h2>{% if edit %}แก้ไขเมนูอาหาร{% else %}เพิ่มเมนูอาหาร{% endif %}</h2>
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
-            <div class="form-actions">
-                <button type="submit" class="btn">{% if edit %}บันทึกการแก้ไข{% else %}บันทึกเมนู{% endif %}</button>
-                <a href="{% url 'staff_menu_list' %}" class="btn btn-cancel">ยกเลิก</a>
-            </div>
+                {{ form.as_p }}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">{% if edit %}บันทึกการแก้ไข{% else %}บันทึกเมนู{% endif %}</button>
+                    <button href="{% url 'staff_menu_list' %}" class="btn btn-danger">ยกเลิก</button>
+                </div>
         </form>
-
-        <!-- แสดงข้อผิดพลาดถ้ามี -->
-        {% if form.errors %}
-        <div class="error-messages">
-            <h3>พบข้อผิดพลาด:</h3>
-            <ul>
-                {% for field, errors in form.errors.items %}
-                <li>{{ field }}: {{ errors|striptags }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-    </div>
-
-</body>
-</html>
+{% endblock %}

@@ -1,28 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เพิ่มผู้ใช้</title>
-</head>
-<body>
-    <h2>เพิ่มผู้ใช้ใหม่</h2>
-    <form method="post" action="">
-        {% csrf_token %}
-        {{ form.as_p }} <!-- แสดงฟอร์มทั้งหมดในรูปแบบพารากราฟ -->
-        <button type="submit">บันทึก</button>
-    </form>
+{% extends 'base.html' %}
+{% block title %}เพิ่มผู้ใช้{% endblock %}
 
-    <!-- แสดงข้อผิดพลาดถ้ามี -->
-    {% if form.errors %}
-    <div class="error-messages">
-        <h3>พบข้อผิดพลาด:</h3>
-        <ul>
-            {% for field, errors in form.errors.items %}
-            <li>{{ field }}: {{ errors|striptags }}</li>
-            {% endfor %}
-        </ul>
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">เพิ่มผู้ใช้ใหม่</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary w-100 mt-3">บันทึก</button>
+                        </form>
+
+                        <!-- แสดงข้อผิดพลาดถ้ามี -->
+                        {% if form.errors %}
+                        <div class="alert alert-danger mt-3">
+                            <h3>พบข้อผิดพลาด:</h3>
+                            <ul class="mb-0">
+                                {% for field, errors in form.errors.items %}
+                                <li>{{ field }}: {{ errors|striptags }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% endif %}
-</body>
-</html>
+{% endblock %}

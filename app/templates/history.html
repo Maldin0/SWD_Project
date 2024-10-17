@@ -1,50 +1,45 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ประวัติการสั่งอาหาร</title>
-    <link rel="stylesheet" href="{% static 'history/style.css' %}">
-</head>
-<body>
+{% extends "base.html" %}
 
-    {% include 'nav.html' %}
+{% block title %}ประวัติการสั่งอาหาร{% endblock %}
 
-    <h1>ประวัติการสั่งอาหารของโต๊ะ {{ table_number }}</h1>
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">ประวัติการสั่งอาหารของโต๊ะ {{ table_number }}</h1>
 
-    <div class="order-history-container">
         {% if no_history %}
-            <p>{{ no_history }}</p>
+            <p class="text-center">{{ no_history }}</p>
         {% else %}
             <!-- วนลูปแสดงรายการคำสั่งซื้อ -->
             {% for order in orders %}
-            <div class="order">
-                <h2>วันที่สั่ง: {{ order.order_date }}</h2>
-                <p>หมายเหตุ: {{ order.remark|default:'ไม่มีหมายเหตุ' }}</p>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">วันที่สั่ง: {{ order.order_date }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>หมายเหตุ: {{ order.remark|default:'ไม่มีหมายเหตุ' }}</p>
 
-                <table class="order-items-table">
-                    <thead>
-                        <tr>
-                            <th>ชื่ออาหาร</th>
-                            <th>จำนวน</th>
-                            <th>สถานะ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- วนลูปแสดงรายการอาหารที่สั่งในคำสั่งซื้อนั้น -->
-                        {% for item in order.orderitems_set.all %}
-                        <tr>
-                            <td>{{ item.dish.name }}</td>
-                            <td>{{ item.amount }}</td>
-                            <td>{{ item.get_status_display }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ชื่ออาหาร</th>
+                                <th>จำนวน</th>
+                                <th>สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- วนลูปแสดงรายการอาหารที่สั่งในคำสั่งซื้อนั้น -->
+                            {% for item in order.orderitems_set.all %}
+                            <tr>
+                                <td>{{ item.dish.name }}</td>
+                                <td>{{ item.amount }}</td>
+                                <td>{{ item.get_status_display }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
             {% endfor %}
         {% endif %}
     </div>
-</body>
-</html>
+{% endblock %}

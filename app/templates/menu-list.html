@@ -1,4 +1,111 @@
-{% load static %}
+{% extends "base.html" %}
+{% block title %}Menu - โต๊ะ{{ table_number }}{% endblock %}
+{% block style %}
+.dishes {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dish-card {
+    flex: 0 0 auto;
+}
+{% endblock %}
+{% block content %}
+    <div class="container mt-4">
+        {% if table_number %}
+        <h1 class="text-center">เมนูอาหารสำหรับโต๊ะ {{ table_number }}</h1>
+        {% else %}
+        <h1 class="text-center">เมนูอาหารสำหรับพนักงาน</h1>
+        {% endif %}
+        {% if perms.app.add_dishes and perms.app.add_courses %}
+        <form method="post" action="{% url 'add_dish' %}">
+            {% csrf_token %}
+            <button class="btn btn-success mb-3">เพิ่มเมนูอาหารใหม่</button>
+        </form>
+        {% endif %}
+
+        <!-- ฟอร์มสำหรับค้นหาและกรองเมนู -->
+        <form method="get" action="" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <input type="text" name="search" class="form-control" placeholder="ค้นหาเมนูอาหาร..." value="{{ request.GET.search }}">
+                </div>
+                <div class="col-md-4">
+                    <select name="course_filter" class="form-select">
+                        <option value="">เลือกหมวดหมู่</option>
+                        {% for course in courses %}
+                            <option value="{{ course.id }}" {% if request.GET.course_filter == course.id|stringformat:"s" %}selected{% endif %}>
+                                {{ course.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">ค้นหา</button>
+                </div>
+            </div>
+        </form>
+        <div class="container">
+            {% for course in courses %}
+                <div class="course mb-4">
+                    <div class="card">
+                        <h2 class="card-header bg-primary text-white p-2">{{ course.name }}</h2>
+                        <div class="card-body">
+                            <div class="dishes row">
+                                {% for dish in dishes %}
+                                    {% if course in dish.course.all %}
+                                        <div class="dish-card col-md-6 mb-3">
+                                            <div class="card">
+                                                {% if dish.image %}
+                                                    <img src="../../media/{{ dish.image }}" class="card-img-top" alt="{{ dish.name }}">
+                                                {% else %}
+                                                    <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="No Image Available">
+                                                {% endif %}
+                                                <div class="card-body">
+                                                    <h3 class="card-title">{{ dish.name }}</h3>
+                                                    <p class="card-text">{{ dish.description }}</p>
+                                                    <div class="price">{{ dish.price }} บาท</div>
+                                                    {% if not request.user.is_staff %}
+                                                    <form method="post" action="" class="mt-2">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                                        <div class="input-group mb-3">
+                                                            <input type="number" name="amount" class="form-control" value="1" min="1">
+                                                            <button type="submit" class="btn btn-primary">เพิ่มลงตะกร้า</button>
+                                                        </div>
+                                                    </form>
+                                                    {% endif %}
+
+                                                    {% if perms.app.change_dishes and perms.app.change_courses %}
+                                                    <form method="get" action="{% url 'edit_dish' dish.id %}" class="mb-2">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                                        <button type="submit" class="btn btn-secondary w-100">แก้ไข</button>
+                                                    </form>
+                                                    {% endif %}
+                                                    {% if perms.app.delete_dishes and perms.app.delete_courses %}
+                                                    <form method="post" action="{% url 'delete_dish' dish.id %}" class="mb-2">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                                        <button type="submit" class="btn btn-danger w-100">ลบ</button>
+                                                    </form>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+{% comment %} {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,4 +204,4 @@
     </div>
 
 </body>
-</html>
+</html> {% endcomment %}

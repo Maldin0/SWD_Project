@@ -1,45 +1,55 @@
-{% load static %}
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="{% static 'login/style.css' %}">
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
 </head>
-<body>
-    <div class="login-container">
-        <h2>เข้าสู่ระบบ</h2>
-        
-        <!-- ฟอร์มสำหรับล็อกอิน -->
-        <form method="post" action="{% url 'login' %}">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            
-            <div class="form-group">
-                <label for="username">ชื่อผู้ใช้</label>
-                {{ form.username }}
-            </div>
-            
-            <div class="form-group">
-                <label for="password">รหัสผ่าน</label>
-                {{ form.password }}
-            </div>
-            
-            <button type="submit" class="btn-login">เข้าสู่ระบบ</button>
-        </form>
+    <body>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <h2 class="card-header text-center mb-4 bg-primary text-white">เข้าสู่ระบบ</h2>
+                        <div class="card-body">
+                            
+                            <!-- ฟอร์มสำหรับล็อกอิน -->
+                            <form method="post" action="{% url 'login' %}">
+                                {% csrf_token %}
+                                {{ form.non_field_errors }}
+                                
+                                <div class="form-group mb-3">
+                                    <label for="username" class="form-label">ชื่อผู้ใช้</label>
+                                    {{ form.username | add_class:"form-control" }}
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="password" class="form-label">รหัสผ่าน</label>
+                                    {{ form.password | add_class:"form-control" }}
+                                </div>
+                                
+                                <button type="submit" class="btn btn-success w-100">เข้าสู่ระบบ</button>
+                            </form>
 
-        <!-- ตรวจสอบว่ามีข้อผิดพลาดหรือไม่ -->
-        {% if form.errors %}
-            <div class="error-messages">
-                <p>พบข้อผิดพลาดในการเข้าสู่ระบบ:</p>
-                <ul>
-                    {% for field, errors in form.errors.items %}
-                        <li>{{ errors|striptags }}</li>
-                    {% endfor %}
-                </ul>
+                            <!-- ตรวจสอบว่ามีข้อผิดพลาดหรือไม่ -->
+                            {% if form.errors %}
+                                <div class="alert alert-danger mt-3">
+                                    <p>พบข้อผิดพลาดในการเข้าสู่ระบบ:</p>
+                                    <ul class="mb-0">
+                                        {% for field, errors in form.errors.items %}
+                                            <li>{{ errors|striptags }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
-        {% endif %}
-    </div>
-</body>
+        </div>
+    </body>
 </html>

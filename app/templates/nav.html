@@ -1,41 +1,41 @@
-{% load static %}
-<!-- navbar.html -->
-<link rel="stylesheet" href="{% static 'nav/style.css' %}">
-
-<nav class="navbar">
-    <div class="navbar-container">
-        <div class="navbar-logo">
-            <h2>ร้านอาหาร</h2>
-        </div>
-        <div class="navbar-links">
-            <!-- ปุ่มดูประวัติการสั่งอาหาร -->
-            {% if not request.user.is_staff %}
-                {% if table_number %}
-                <a href="{% url 'order_history' table_number %}" class="navbar-btn">ดูประวัติการสั่งอาหาร</a>
-                <!-- ปุ่มดูตะกร้าอาหาร -->
-                <a href="{% url 'view_cart' table_number %}" class="navbar-btn">ตะกร้า</a>
-                {% else %}
-                <a href="#" class="navbar-btn disabled">ดูประวัติการสั่งอาหาร</a> <!-- ห้ามคลิกเมื่อไม่มี table_number -->
-                <a href="#" class="navbar-btn disabled">ตะกร้า</a>
+<div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-color-white d-flex">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="">ร้านอาหาร</a>
+            <button class="navbar-toggler align-self-last" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if request.user.is_authenticated and request.user.is_staff %}
+                <span class="navbar-text">Welcome , {{ request.user.first_name }} {{ request.user.last_name }}</span>
                 {% endif %}
-            {% endif %}
-
-            <!-- ปุ่มสำหรับพนักงานเข้าสู่รายชื่อผู้ใช้ -->
-            {% if request.user.is_authenticated and request.user.is_staff %}
-            <span>Welcome , {{ request.user.first_name }} {{ request.user.last_name }}</span>
-            <a href="{% url 'profile' %}" class="navbar-btn">profile</a>
-            {% endif %}
-
-             <!-- ปุ่มดูรายชื่อผู้ใช้ -->
-            {% if request.user.is_authenticated and request.user.is_superuser %}
-            <a href="{% url 'user_list' %}" class="navbar-btn">ดูรายชื่อผู้ใช้</a>
-            {% endif %}
-
-            {% if request.user.is_authenticated and request.user.is_staff %}
-            <a href="{% url 'logout' %}">
-                <button type="submit" class="navbar-btn logout-btn">ออกจากระบบ</button>
-            </a>
-            {% endif %}
+                {% if not request.user.is_staff %}
+                    {% if table_number %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'order_history' table_number %}">ดูประวัติการสั่งอาหาร</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_cart' table_number %}">ตะกร้า</a>
+                    </li>
+                    {% endif %}
+                {% endif %}
+                {% if request.user.is_authenticated and request.user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">ออกจากระบบ</a>
+                </li>
+                {% endif %}
+                {% if request.user.is_authenticated and request.user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'user_list' %}">ดูรายชื่อผู้ใช้</a>
+                </li>
+                {% endif %}
+            </ul>
         </div>
-    </div>
-</nav>
+    </nav>
+</div>
+

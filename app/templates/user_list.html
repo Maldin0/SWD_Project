@@ -1,19 +1,13 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายชื่อผู้ใช้</title>
-    <link rel="stylesheet" href="{% static 'user_list/style.css' %}">
-</head>
-<body>
-    {% include 'nav.html' %}
-    <div class="user-list-container">
-        <h2>รายชื่อผู้ใช้ทั้งหมด</h2>
-        <a href="{% url 'add_user' %}" class="btn">เพิ่มพนักงาน</a> <!-- ปุ่มเพิ่มพนักงาน -->
-        <table>
-            <thead>
+{% extends 'base.html' %}
+{% block title %}รายชื่อผู้ใช้{% endblock %}
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">รายชื่อผู้ใช้ทั้งหมด</h2>
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{% url 'add_user' %}" class="btn btn-success">เพิ่มพนักงาน</a> <!-- ปุ่มเพิ่มพนักงาน -->
+        </div>
+        <table class="table table-striped">
+            <thead class="thead-dark">
                 <tr>
                     <th>ชื่อผู้ใช้</th>
                     <th>อีเมล</th>
@@ -32,7 +26,7 @@
                     <td>
                         <form method="post" action="{% url 'delete_user' user.id %}"> <!-- URL สำหรับลบผู้ใช้ -->
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-delete">ลบ</button> <!-- ปุ่มลบ -->
+                            <button type="submit" class="btn btn-danger btn-sm">ลบ</button> <!-- ปุ่มลบ -->
                         </form>
                     </td>
                 </tr>
@@ -40,6 +34,4 @@
             </tbody>
         </table>
     </div>
-</body>
-</html>
-
+{% endblock %}

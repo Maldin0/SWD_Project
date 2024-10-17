@@ -306,3 +306,7 @@ class UserDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
         user = User.objects.get(pk=user_id)
         user.delete()  # ลบผู้ใช้ออกจากฐานข้อมูล
         return redirect('user_list')  # กลับไปยังหน้าแสดงรายชื่อผู้ใช้
+    
+class BaseView(View):
+    def get(self, request):
+        return render(request, 'base.html')
