@@ -9,7 +9,7 @@
             <ul class="list-group mb-4">
                 {% for item in cart_items %}
                 <li class="list-group-item d-flex align-items-center">
-                    <img src="{% if item.dish.image %}../../media/{{ item.dish.image }}{% else %}https://via.placeholder.com/100x100{% endif %}" alt="{{ item.dish.name }}" class="img-thumbnail me-3" style="width: 100px; height: 100px;">
+                    <img src="{% if item.dish.image %}{{ item.dish.image.url }}{% else %}https://via.placeholder.com/100x100{% endif %}" alt="{{ item.dish.name }}" class="img-thumbnail me-3" style="width: 100px; height: 100px;">
                     <div>
                         <h3 class="h5">{{ item.dish.name }}</h3>
                         <p class="mb-1">จำนวน: {{ item.amount }}</p>

@@ -43,7 +43,7 @@ class MenuListView(View):
         # ค่าที่ค้นหาหรือกรองจาก request
         search_query = request.GET.get('search', '')
         course_filter = request.GET.get('course_filter', '')
-
+        
         # Filter by search query
         if search_query:
             dishes = dishes.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
